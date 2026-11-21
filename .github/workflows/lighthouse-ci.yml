@@ -6,7 +6,7 @@ on:
   pull_request:
     branches: [main, develop]
 
-permissions:  # least-privilege CI tokens (#108)
+permissions:
   contents: read
 
 jobs:
@@ -15,18 +15,33 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: npm
+
       - name: Install dependencies
         run: npm ci
+
       - name: Build
         run: |
           npm run build
           npm run export || true
+
       - name: Run LHCI autorun
         env:
           LHCI_GITHUB_COMMIT_SHA: ${{ github.sha }}
         run: |
-          npx -y @lhci/cli autorun --config=.lighthouserc.json --upload.target=temporary-public-storage
+          npx -y @lhci/cli autorun \
+            --config=.lighthouserc.json \
+            --upload.target=filesystem \
+            --upload.outputDir=./lhci-results
+
+      - name: Upload Lighthouse HTML report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lighthouse-report-${{ github.sha }}
+          path: lhci-results/
+          retention-days: 30

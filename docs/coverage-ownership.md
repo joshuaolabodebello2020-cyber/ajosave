@@ -29,8 +29,10 @@ Their audit scope is in `docs/external-contract-audit.md`.
 
 ## Rules
 
+- Global project coverage minimum is **80 %**; patch coverage minimum is **70 %**.
+- A coverage drop of more than **2 percentage points** on either project or patch fails the CI check.
 - A component's project status is `target: auto` with a 2% threshold: coverage may not fall more than
-  2 points below the base branch for that component. Patch coverage stays at 70% (5% threshold).
+  2 points below the base branch for that component. Patch coverage stays at 70% (2% threshold).
 - Changes to `codecov.yml`, `jest.config.js` or `.github/CODEOWNERS` are themselves owner-reviewed.
 - Do not lower a threshold to make a PR pass; add the missing tests or ask the owner for an exception
   in the PR description.
